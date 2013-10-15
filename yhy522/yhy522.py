@@ -6,15 +6,25 @@ HEADER = 0xAABB
 # XOR of Length and Data bytes
 def calculate_checksum(length, command, data):
     result = length ^ command
-    result = result ^ data
+    if data:
+        result = result ^ data
     return result
 
 def send_command(command, data):
     conn = serial.Serial('/dev/ttyAMA0', 19200, timeout=1)
-    length = len(hex(data))
+    if data:
+        length = len(str(command)) + len(str(data))
+    else:
+        length = len(str(command))
     csum = calculate_checksum(length, command, data)
-    conn.write(hex(HEADER) + hex(length) + hex(data) + hex(csum))
-    print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(command), hex(length), hex(data), hex(csum)))
+    if data:
+        conn.write(hex(HEADER) + hex(length) + hex(data) + hex(csum))
+    else:
+        conn.write(hex(HEADER) + hex(length) + hex(csum))
+    if data:
+        print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
+    else:
+        print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
     line = conn.readline()   # read a '\n' terminated line
     for c in line:
         print "%#x" % ord(c)
@@ -57,7 +67,7 @@ def Card_Sleep(data):
     send_command(commands.Card_Sleep, data)
 def Card_Type(data):
     send_command(commands.Card_Type, data)
-def Card_ID(data):
+def Card_ID(data=None):
     send_command(commands.Card_ID, data)
 def Block_Read(data):
     send_command(commands.Block_Read, data)
