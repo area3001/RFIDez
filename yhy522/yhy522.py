@@ -18,11 +18,9 @@ def send_command(command, data):
         length = len(str(command))
     csum = calculate_checksum(length, command, data)
     if data:
-        conn.write(hex(HEADER) + hex(length) + hex(data) + hex(csum))
+        conn.write(hex(HEADER) + hex(length) + hex(command) + hex(data) + hex(csum))
     else:
-        conn.write(HEADER)
-        conn.write(length)
-        conn.write(csum)
+        conn.write(hex(HEADER) + hex(length) + hex(command) + hex(csum))
     if data:
         print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
     else:
