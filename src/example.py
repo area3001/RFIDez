@@ -3,8 +3,11 @@ Created on 15 okt. 2013
 
 @author: bert
 '''
-from yhy522 import yhy522
+
 import sys
+sys.path.append("../yhy522/")
+
+from yhy522 import yhy522
 # import yhy522.yhy522
 
 def main(argv):
