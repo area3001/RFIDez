@@ -10,15 +10,15 @@ def calculate_checksum(length, command, data):
     return result
 
 def send_command(command, data):
-    conn = serial.Serial('/dev/ttyAM0', 19200, timeout=1)
+#     conn = serial.Serial('/dev/ttyAM0', 19200, timeout=1)
     length = len(hex(data))
     csum = calculate_checksum(length, command, data)
-    conn.write(HEADER + length + data + csum)
+#     conn.write(HEADER + length + data + csum)
     print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(command), hex(length), hex(data), hex(csum)))
-    line = conn.readline()   # read a '\n' terminated line
-    print("returned : {1}".format(line))
-    conn.close()
-    return line
+#     line = conn.readline()   # read a '\n' terminated line
+#     print("returned : {1}".format(line))
+#     conn.close()
+#     return line
 
 # System commands
 def Test_Com(data):
