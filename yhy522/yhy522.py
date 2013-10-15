@@ -16,7 +16,7 @@ def send_command(command, data):
     conn.write(hex(HEADER) + hex(length) + hex(data) + hex(csum))
     print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(command), hex(length), hex(data), hex(csum)))
     line = conn.readline()   # read a '\n' terminated line
-    print("returned : {1}".format(line))
+    print("returned : {1}".format(hex(line)))
     conn.close()
     return line
 
