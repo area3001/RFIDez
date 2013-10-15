@@ -5,11 +5,12 @@ Created on 15 okt. 2013
 '''
 
 import sys
-from yhy522 import yhy522
+sys.path.append("../yhy522")
+import yhy522
 
 def main(argv):
 #     print '0x%.2x' % yhy522.calculate_checksum(0x03, [0x01,0x02,0x03])
-#     yhy522.Test_Com(0x445566)
+#     yhy522.Test_Com(0x44)
     yhy522.Card_ID()
 #     yhy522.Card_ID(data)
 
