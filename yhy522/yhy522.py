@@ -10,7 +10,7 @@ def calculate_checksum(length, command, data):
     return result
 
 def send_command(command, data):
-    conn = serial.Serial('/dev/ttyAM0', 19200, timeout=1)
+    conn = serial.Serial('/dev/ttyAMA0', 19200, timeout=1)
     length = len(hex(data))
     csum = calculate_checksum(length, command, data)
     conn.write(HEADER + length + data + csum)
