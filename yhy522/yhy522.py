@@ -20,7 +20,7 @@ def send_command(command, data):
     if data:
         conn.write(format(HEADER, '02x') + format(length, '02x') + format(command, '02x') + format(data, '02x') + format(csum, '02x'))
     else:
-        conn.write(format(HEADER, '02x') + format(length, '02x') + format(command, '02x') + format(csum, '02x'))
+        print(format(HEADER, '02x') + format(length, '02x') + format(command, '02x') + format(csum, '02x'))
     if data:
         print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
     else:
