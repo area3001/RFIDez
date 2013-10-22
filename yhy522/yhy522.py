@@ -20,7 +20,8 @@ def send_command(command, data):
         length = len(str(command))
     csum = calculate_checksum(length, command, data)
     
-    conn.write(format(HEADER, 'X'))
+    conn.write(chr(HEADER_1))
+    conn.write(chr(HEADER_2))
     conn.write(chr(length))
     conn.write(chr(command))
     if data:
