@@ -9,15 +9,20 @@ HEADER_2 = 0xBB
 def calculate_checksum(length, command, data):
     result = length ^ command
     if data:
-        result = result ^ data
+        for d in data:
+            result = result ^ d
     return result
+
+def calculate_length(command, data):
+    length = 2
+    if data:
+        for d in data:
+            length += 1
+    return length
 
 def send_command(command, data):
     conn = serial.Serial('/dev/ttyAMA0', 19200, timeout=1)
-    if data:
-        length = len(str(command)) + len(str(data))
-    else:
-        length = len(str(command))
+    length = calculate_length(command, data)
     csum = calculate_checksum(length, command, data)
     
     conn.write(chr(HEADER_1))
@@ -25,17 +30,21 @@ def send_command(command, data):
     conn.write(chr(length))
     conn.write(chr(command))
     if data:
-        conn.write(format(data, 'X'))
+        for d in data:
+            conn.write(chr(d))
     conn.write(chr(csum))
     
     if data:
-        print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
+        print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), str(data), hex(csum)))
     else:
         print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
         
     line = conn.readline()   # read a '\n' terminated line
-    for c in line:
-        print "%#x" % ord(c)
+    if line:
+        for c in line:
+            print "%#x" % ord(c)
+    else:
+        print "No response"
     conn.close()
     return line
 
