@@ -19,19 +19,21 @@ def send_command(command, data):
     else:
         length = len(str(command))
     csum = calculate_checksum(length, command, data)
+    
+    conn.write(chr(HEADER_1))
+    conn.write(chr(HEADER_2))
+    conn.write(chr(length))
+    conn.write(chr(command))
     if data:
-        conn.write(format(HEADER, '02x') + format(length, '02x') + format(command, '02x') + format(data, '02x') + format(csum, '02x'))
-    else:
-#         conn.write(chr(HEADER_1))
-#         conn.write(chr(HEADER_2))
-        conn.write(chr(HEADER))
-        conn.write(chr(length))
-        conn.write(chr(command))
-        conn.write(chr(csum))
+        for c in data:
+            conn.write(chr(c))
+    conn.write(chr(csum))
+    
     if data:
         print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
     else:
         print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
+        
     line = conn.readline()   # read a '\n' terminated line
     for c in line:
         print "%#x" % ord(c)
