@@ -20,8 +20,7 @@ def send_command(command, data):
         length = len(str(command))
     csum = calculate_checksum(length, command, data)
     
-    conn.write(chr(HEADER_1))
-    conn.write(chr(HEADER_2))
+    conn.write(format(HEADER, 'X'))
     conn.write(chr(length))
     conn.write(chr(command))
     if data:
@@ -29,11 +28,12 @@ def send_command(command, data):
     conn.write(chr(csum))
     
     if data:
-        print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
+        print "{0} {1} {2} {3} {4}" % format(HEADER, 'X'), format(length, 'X'), format(command, 'X'), format(data, 'X'), format(csum, 'X')
     else:
-        print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
+        print "{0} {1} {2} {3} {4}" % format(HEADER, 'X'), format(length, 'X'), format(command, 'X'), format(csum, 'X')
         
     line = conn.readline()   # read a '\n' terminated line
+    print line
     for c in line:
         print "%#x" % ord(c)
     conn.close()
