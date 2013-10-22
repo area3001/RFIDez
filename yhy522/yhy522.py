@@ -28,9 +28,9 @@ def send_command(command, data):
     conn.write(chr(csum))
     
     if data:
-        print "{0} {1} {2} {3} {4}" % format(HEADER, 'X'), format(length, 'X'), format(command, 'X'), format(data, 'X'), format(csum, 'X')
+        print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), hex(data), hex(csum)))
     else:
-        print "{0} {1} {2} {3} {4}" % format(HEADER, 'X'), format(length, 'X'), format(command, 'X'), format(csum, 'X')
+        print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
         
     line = conn.readline()   # read a '\n' terminated line
     print line
