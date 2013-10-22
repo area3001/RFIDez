@@ -14,7 +14,7 @@ def validate(response):
     csum = ord(response[-1])
     data = [ ord(x) for x in response[4:-1] ]    
 
-    if(header1 != 0xAA | header2 != 0xBB):
+    if(header1 != HEADER_1 | header2 != HEADER_2):
         print "Header is not correct"
         result = False
     if(length != (len(response[2:-1]))):
