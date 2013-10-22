@@ -25,8 +25,7 @@ def send_command(command, data):
     conn.write(chr(length))
     conn.write(chr(command))
     if data:
-        for c in data:
-            conn.write(chr(c))
+        conn.write(format(data, 'X'))
     conn.write(chr(csum))
     
     if data:
