@@ -22,8 +22,9 @@ def send_command(command, data):
     if data:
         conn.write(format(HEADER, '02x') + format(length, '02x') + format(command, '02x') + format(data, '02x') + format(csum, '02x'))
     else:
-        conn.write(chr(HEADER_1))
-        conn.write(chr(HEADER_2))
+#         conn.write(chr(HEADER_1))
+#         conn.write(chr(HEADER_2))
+        conn.write(chr(HEADER))
         conn.write(chr(length))
         conn.write(chr(command))
         conn.write(chr(csum))
