@@ -5,6 +5,31 @@ HEADER = 0xAABB
 HEADER_1 = 0xAA
 HEADER_2 = 0xBB
 
+def validate(response):
+    result = True
+    header1 = ord(response[0])
+    header2 = ord(response[1])
+    length = ord(response[2])
+    status = ord(response[3])
+    csum = ord(response[-1])
+    data = [ ord(x) for x in response[4:-1] ]    
+
+    if(header1 != 0xAA | header2 != 0xBB):
+        print "Header is not correct"
+        result = False
+    if(length != (len(response[2:-1]))):
+        print "Length is not correct"
+        result = False
+    print "Status = 0x" + format(status, 'X')
+
+    
+    print data
+    my_csum = calculate_checksum(length, status, data)
+    if(my_csum != csum):
+        print "Checksum not ok: %x != %x" % (my_csum, csum)
+        result = False
+    return result
+
 # XOR of Length and Data bytes
 def calculate_checksum(length, command, data):
     result = length ^ command
@@ -34,17 +59,26 @@ def send_command(command, data):
             conn.write(chr(d))
     conn.write(chr(csum))
     
+    to_send = ""
+    to_send += format(HEADER, 'X')
+    to_send += format(length, 'X')
+    to_send += format(command, 'X')
     if data:
-        print("{0} {1} {2} {3} {4}".format(hex(HEADER), hex(length), hex(command), str(data), hex(csum)))
-    else:
-        print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
-        
+        for d in data:
+           to_send += format(d, 'X')
+    to_send += format(csum, 'X')
+    print "Sending:  " + to_send    
+
     line = conn.readline()   # read a '\n' terminated line
+    validate(line)
+    result = ""
     if line:
         for c in line:
-            print "%#x" % ord(c)
+            result += format(ord(c), 'X')
+        print "Received: " + result
     else:
         print "No response"
+    
     conn.close()
     return line
 
