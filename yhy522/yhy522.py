@@ -33,7 +33,6 @@ def send_command(command, data):
         print("{0} {1} {2} {3}".format(hex(HEADER), hex(length), hex(command), hex(csum)))
         
     line = conn.readline()   # read a '\n' terminated line
-    print line
     for c in line:
         print "%#x" % ord(c)
     conn.close()
