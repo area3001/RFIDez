@@ -60,20 +60,20 @@ def send_command(command, data):
     conn.write(chr(csum))
     
     to_send = ""
-    to_send += format(HEADER, 'X')
-    to_send += format(length, 'X')
-    to_send += format(command, 'X')
+    to_send += format(HEADER, '02X')
+    to_send += format(length, '02X')
+    to_send += format(command, '02X')
     if data:
         for d in data:
-           to_send += format(d, 'X')
-    to_send += format(csum, 'X')
+           to_send += format(d, '02X')
+    to_send += format(csum, '02X')
     print "Sending:  " + to_send    
 
     line = conn.readline()   # read a '\n' terminated line
     if line:
         result = ""
         for c in line:
-            result += format(ord(c), 'X')
+            result += format(ord(c), '02X')
         if(validate(line)):
             print "Received: " + result
         else:
@@ -174,15 +174,10 @@ def LOCK_Card(data):
     send_command(yhy522commands.LOCK_Card, data)
 def Card_Sleep(data):
     send_command(yhy522commands.Card_Sleep, data)
-def Card_Type(data):
-    succes, data = send_command(yhy522commands.Card_Type, data)
+def Card_Type():
+    succes, data = send_command(yhy522commands.Card_Type, [])
     if(succes):
-        if(data == 0x0400):
-            return 1
-        elif(data == 0x0200):
-            return 4
-        else:
-            raise Exception("Unknown card type")
+        return data[0] * 256 + data[1]
     else:
         raise Exception("Error getting card type")
 

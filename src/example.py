@@ -31,27 +31,27 @@ def main(argv):
     print "Card_Type()"
     try:
         card_type = yhy522.Card_Type()
-        print "Card Type = {0}".format(card_type)
+        print "Card Type = {0}".format(card_type, '02X')
     except Exception as e:
         print "Card_Type() Failed"   
 
     #TEST Antenna_Control
     print "Antenna_Control()"
-    if(Antenna_Control(False)):
+    if(yhy522.Antenna_Control(False)):
     	print "Setting antenna OFF: Succes"
     else:
 		print "Setting antenna OFF: Failed"  
-    if(Antenna_Control(True)):
+    if(yhy522.Antenna_Control(True)):
     	print "Setting antenna ON: Succes"
     else:
 		print "Setting antenna ON: Failed"    	
 
-	#TEST Sense_Mode
-	Sense_Mode(code)
-	if(Sense_Mode(1)):
-    	print "Setting sense mode to 'Auto seek card': Succes"
+    #TEST Sense_Mode
+    print "Sense_Mode()"
+    if(yhy522.Sense_Mode(1)):
+        print "Setting sense mode to 'Auto seek card': Succes"
     else:
-		print "Setting sense mode to 'Auto seek card': Failed"
+        print "Setting sense mode to 'Auto seek card': Failed"
 
 if __name__ == "__main__":
     main(sys.argv)
