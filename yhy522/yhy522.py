@@ -20,14 +20,14 @@ def validate(response):
     if(length != (len(response[2:-1]))):
         print "Length is not correct"
         result = False
-    print "Status = 0x" + format(status, 'X')
-
-    
-    print data
     my_csum = calculate_checksum(length, status, data)
     if(my_csum != csum):
         print "Checksum not ok: %x != %x" % (my_csum, csum)
         result = False
+            
+    #print "Status = 0x" + format(status, 'X')
+    #print "data = " + data
+
     return result
 
 # XOR of Length and Data bytes
@@ -70,21 +70,39 @@ def send_command(command, data):
     print "Sending:  " + to_send    
 
     line = conn.readline()   # read a '\n' terminated line
-    validate(line)
-    result = ""
     if line:
+        result = ""
         for c in line:
             result += format(ord(c), 'X')
-        print "Received: " + result
+        if(validate(line)):
+            print "Received: " + result
+        else:
+            print "Received invalid data: " + result
     else:
-        print "No response"
+        print "Received no response"
     
     conn.close()
+
+    recv_status = ord(line[3])
+
+    if(recv_status == command):
+        print "succes"
+        return True
+    elif(recv_status == ones_complement(command ^ 0xFF)):
+        print "failed"
+        return False
+
+
+    recv_data = [ ord(x) for x in response[4:-1] ]
+
     return line
 
 # System commands
 def Test_Com(data):
-    send_command(yhy522commands.Test_Com, data) 
+    send_command(yhy522commands.Test_Com, data)
+
+
+
 def MSleep(data):
     send_command(yhy522commands.MSleep, data)
 def MConfigure(data):
