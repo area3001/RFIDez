@@ -107,21 +107,60 @@ def Test_Com(data):
 def MSleep(data):
     send_command(yhy522commands.MSleep, data)
 def MConfigure(data):
-    send_command(yhy522commands.MConfigure, data)
+    succes, data = send_command(yhy522commands.MConfigure, data)
 def Download_Keys(data):
     send_command(yhy522commands.Download_Keys, data)
 def Download_Block_String(data):
     send_command(yhy522commands.Download_Block_String, data)
 def Download_Value(data):
     send_command(yhy522commands.Download_Value, data)
-def Antenna_Control(data):
-    send_command(yhy522commands.Antenna_Control, data)
-def Sense_Mode(data):
-    send_command(yhy522commands.Sense_Mode, data)
-def Beep(data):
-    send_command(yhy522commands.Beep, data)
-def Beep_time(data):
-    send_command(yhy522commands.Beep_time, data)
+def Antenna_Control(state):
+    if(state):
+        data = [0x03]
+    else:
+        data = [0x00]
+    succes, data = send_command(yhy522commands.Antenna_Control, data)
+
+    if(succes):
+        return True
+    else:
+        return False
+
+
+def Sense_Mode(code):
+    if(code >= 0 & code < 8):
+        data = [code]
+        succes, data = send_command(yhy522commands.Sense_Mode, data)
+        if(succes):
+            return True
+        else:
+            return False
+    else:
+        raise Exception("Unknown code. Should be between 0 and 7")
+
+def Beep(activate, amount):
+    if(activate & amount > 0 & amount < 16):
+        data = [0x10 + amount]
+    else:
+        data = [0x0F]
+
+    succes, data = send_command(yhy522commands.Beep, data)
+    if(succes):
+        return True
+    else:
+        return False
+
+def Beep_time(interval_ms):
+    data = interval_ms / 10
+    if(data > 255):
+        data = 255
+    data = [data]
+    succes, data = send_command(yhy522commands.Beep_time, data)
+    if(succes):
+        return True
+    else:
+        return False
+
 def Output1(data):
     send_command(yhy522commands.Output1, data)
 def Output2(data):
@@ -136,13 +175,24 @@ def LOCK_Card(data):
 def Card_Sleep(data):
     send_command(yhy522commands.Card_Sleep, data)
 def Card_Type(data):
-    send_command(yhy522commands.Card_Type, data)
+    succes, data = send_command(yhy522commands.Card_Type, data)
+    if(succes):
+        if(data == 0x0400):
+            return 1
+        elif(data == 0x0200):
+            return 4
+        else:
+            raise Exception("Unknown card type")
+    else:
+        raise Exception("Error getting card type")
+
 def Card_ID(data=None):
     succes, data = send_command(yhy522commands.Card_ID, data)
     if(succes):
         return data
     else:
         raise Exception("Card_ID error")
+
 def Block_Read(data):
     send_command(yhy522commands.Block_Read, data)
 def Block_Write(data):
