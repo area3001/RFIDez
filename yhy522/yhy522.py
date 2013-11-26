@@ -84,13 +84,11 @@ def send_command(command, data):
     conn.close()
 
     recv_status = ord(line[3])
-    recv_data = [ ord(x) for x in response[4:-1] ]
+    recv_data = [ ord(x) for x in line[4:-1] ]
 
     if(recv_status == command):
-        print "Succes"
         return True, recv_data
-    elif(recv_status == ones_complement(command ^ 0xFF)):
-        print "Failed"
+    elif(recv_status == command ^ 0xFF):
         return False, data
 
 # System commands
@@ -140,7 +138,11 @@ def Card_Sleep(data):
 def Card_Type(data):
     send_command(yhy522commands.Card_Type, data)
 def Card_ID(data=None):
-    send_command(yhy522commands.Card_ID, data)
+    succes, data = send_command(yhy522commands.Card_ID, data)
+    if(succes):
+        return data
+    else:
+        raise Exception("Card_ID error")
 def Block_Read(data):
     send_command(yhy522commands.Block_Read, data)
 def Block_Write(data):
