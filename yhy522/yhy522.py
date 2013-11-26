@@ -84,24 +84,27 @@ def send_command(command, data):
     conn.close()
 
     recv_status = ord(line[3])
-
-    if(recv_status == command):
-        print "succes"
-        return True
-    elif(recv_status == ones_complement(command ^ 0xFF)):
-        print "failed"
-        return False
-
-
     recv_data = [ ord(x) for x in response[4:-1] ]
 
-    return line
+    if(recv_status == command):
+        print "Succes"
+        return True, recv_data
+    elif(recv_status == ones_complement(command ^ 0xFF)):
+        print "Failed"
+        return False, data
 
 # System commands
 def Test_Com(data):
-    send_command(yhy522commands.Test_Com, data)
-
-
+    succes, recv_data = send_command(yhy522commands.Test_Com, data)
+    if(succes):
+        if(recv_data == data):
+            # received the same data back == success
+            return True
+        else:
+            # Failed
+            return False
+    else:
+        return False
 
 def MSleep(data):
     send_command(yhy522commands.MSleep, data)
