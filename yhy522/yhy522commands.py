@@ -1,4 +1,4 @@
-import yhy522commands as cmd
+import yhy522constants as cmd
 import yhy522
 
 # System commands
