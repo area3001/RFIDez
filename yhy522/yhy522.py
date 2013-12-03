@@ -1,5 +1,5 @@
 import serial
-import yhy522commands
+import yhy522commands as cmd
 
 HEADER = 0xAABB
 HEADER_1 = 0xAA
@@ -93,7 +93,7 @@ def send_command(command, data):
 
 # System commands
 def Test_Com(data):
-    succes, recv_data = send_command(yhy522commands.Test_Com, data)
+    succes, recv_data = send_command(cmd.Test_Com, data)
     if(succes):
         if(recv_data == data):
             # received the same data back == success
@@ -105,21 +105,25 @@ def Test_Com(data):
         return False
 
 def MSleep(data):
-    send_command(yhy522commands.MSleep, data)
+    send_command(cmd.MSleep, data)
+
+
 def MConfigure(data):
-    succes, data = send_command(yhy522commands.MConfigure, data)
+    succes, data = send_command(cmd.MConfigure, data)
+
+
 def Download_Keys(data):
-    send_command(yhy522commands.Download_Keys, data)
+    send_command(cmd.Download_Keys, data)
 def Download_Block_String(data):
-    send_command(yhy522commands.Download_Block_String, data)
+    send_command(cmd.Download_Block_String, data)
 def Download_Value(data):
-    send_command(yhy522commands.Download_Value, data)
+    send_command(cmd.Download_Value, data)
 def Antenna_Control(state):
     if(state):
         data = [0x03]
     else:
         data = [0x00]
-    succes, data = send_command(yhy522commands.Antenna_Control, data)
+    succes, data = send_command(cmd.Antenna_Control, data)
 
     if(succes):
         return True
@@ -130,7 +134,7 @@ def Antenna_Control(state):
 def Sense_Mode(code):
     if(code >= 0 & code < 8):
         data = [code]
-        succes, data = send_command(yhy522commands.Sense_Mode, data)
+        succes, data = send_command(cmd.Sense_Mode, data)
         if(succes):
             return True
         else:
@@ -139,12 +143,12 @@ def Sense_Mode(code):
         raise Exception("Unknown code. Should be between 0 and 7")
 
 def Beep(activate, amount):
-    if(activate & amount > 0 & amount < 16):
+    if(activate & amount >= 0 & amount < 10):
         data = [0x10 + amount]
     else:
         data = [0x0F]
 
-    succes, data = send_command(yhy522commands.Beep, data)
+    succes, data = send_command(cmd.Beep, data)
     if(succes):
         return True
     else:
@@ -155,54 +159,54 @@ def Beep_time(interval_ms):
     if(data > 255):
         data = 255
     data = [data]
-    succes, data = send_command(yhy522commands.Beep_time, data)
+    succes, data = send_command(cmd.Beep_time, data)
     if(succes):
         return True
     else:
         return False
 
 def Output1(data):
-    send_command(yhy522commands.Output1, data)
+    send_command(cmd.Output1, data)
 def Output2(data):
-    send_command(yhy522commands.Output2, data)
+    send_command(cmd.Output2, data)
 
 # RFID commands
 
 def Change_Card_Keys(data):
-    send_command(yhy522commands.Change_Card_Keys, data)
+    send_command(cmd.Change_Card_Keys, data)
 def LOCK_Card(data):
-    send_command(yhy522commands.LOCK_Card, data)
+    send_command(cmd.LOCK_Card, data)
 def Card_Sleep(data):
-    send_command(yhy522commands.Card_Sleep, data)
+    send_command(cmd.Card_Sleep, data)
 def Card_Type():
-    succes, data = send_command(yhy522commands.Card_Type, [])
+    succes, data = send_command(cmd.Card_Type, [])
     if(succes):
         return data[0] * 256 + data[1]
     else:
         raise Exception("Error getting card type")
 
 def Card_ID(data=None):
-    succes, data = send_command(yhy522commands.Card_ID, data)
+    succes, data = send_command(cmd.Card_ID, data)
     if(succes):
         return data
     else:
         raise Exception("Card_ID error")
 
 def Block_Read(data):
-    send_command(yhy522commands.Block_Read, data)
+    send_command(cmd.Block_Read, data)
 def Block_Write(data):
-    send_command(yhy522commands.Block_Write, data)
+    send_command(cmd.Block_Write, data)
 def Value_Init(data):
-    send_command(yhy522commands.Value_Init, data)
+    send_command(cmd.Value_Init, data)
 def Value_Read(data):
-    send_command(yhy522commands.Value_Read, data)
+    send_command(cmd.Value_Read, data)
 def Value_Inc(data):
-    send_command(yhy522commands.Value_Inc, data)
+    send_command(cmd.Value_Inc, data)
 def Value_Dec(data):
-    send_command(yhy522commands.Value_Dec, data)
+    send_command(cmd.Value_Dec, data)
 def Value_Backup(data):
-    send_command(yhy522commands.Value_Backup, data)
+    send_command(cmd.Value_Backup, data)
 def Sector_Read(data):
-    send_command(yhy522commands.Sector_Read, data)
+    send_command(cmd.Sector_Read, data)
 def Sector_Write(data):
-    send_command(yhy522commands.Sector_Write, data)
+    send_command(cmd.Sector_Write, data)

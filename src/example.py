@@ -53,5 +53,12 @@ def main(argv):
     else:
         print "Setting sense mode to 'Auto seek card': Failed"
 
+    #TEST Beep
+    print "Beep()"
+    if(yhy522.Beep(True, 9)):
+        print "Beep success"
+    else:
+        print "Beep failed"
+
 if __name__ == "__main__":
     main(sys.argv)
