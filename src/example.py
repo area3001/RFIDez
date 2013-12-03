@@ -6,7 +6,7 @@ Created on 15 okt. 2013
 
 import sys
 sys.path.append("../yhy522")
-import yhy522
+import yhy522commands as yhy522
 import time
 
 def main(argv):

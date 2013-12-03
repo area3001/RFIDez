@@ -7,7 +7,8 @@ import sys
 import time
 import mosquitto
 sys.path.append("../yhy522")
-import yhy522
+import yhy522commands as yhy522
+
 try:
     import RPi.GPIO as GPIO
 except RuntimeError:
