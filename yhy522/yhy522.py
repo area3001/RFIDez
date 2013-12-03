@@ -107,10 +107,56 @@ def Test_Com(data):
 def MSleep(data):
     send_command(cmd.MSleep, data)
 
+def SetAutoModeOff():
+    return MConfigure(auto_code=0)
 
-def MConfigure(data):
+def SetAutoSeekCardMode():
+    return MConfigure(auto_code=1)
+
+def SetAutoReadIdMode():
+    return MConfigure(auto_code=2)
+
+def SetAutoReadBlockMode(block):
+    return MConfigure(auto_code=3, block_rw = block)
+
+def SetAutoWriteBlockMode(block):
+    succes, data = MConfigure(auto_code=4, block_rw = block, value)
+    succes2, data2 = Download_Block_String(value)
+    # TODO: implement this stuff
+
+def SetAutoDecrementBlockMode():
+    return MConfigure(auto_code=5)
+
+def SetAutoIncrementBlockMode():
+    return MConfigure(auto_code=6)
+
+def SetAutoReadSectorMode():
+    return MConfigure(auto_code=7)
+
+def MConfigure( auto_code = 0,
+                key_type = 0x00,
+                key_string = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF],
+                block_rw = 0x00,
+                block_value = 0x00,
+                value_backup = 0x00,
+                start_sector = 0x00,
+                end_sector = 0x00,
+                auth_mode = 0x00,
+                RFU = 0x60,
+                baud_code = 5):
+    if(auto_code < 0 | auto_code > 7):
+        raise Exception("Auto Code is not valid: {0}".format(auto_code))
+
+    if(baud_code < 1 | baud_code > 9):
+        baud_code = 5 # default baudrate
+
+    data = [auto_code, key_type] + key_string + [block_rw, block_value, value_backup, start_sector, end_sector, auth_mode, RFU, baud_code]
     succes, data = send_command(cmd.MConfigure, data)
 
+    if(succes):
+        return True
+    else:
+        return False
 
 def Download_Keys(data):
     send_command(cmd.Download_Keys, data)

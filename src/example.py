@@ -7,6 +7,7 @@ Created on 15 okt. 2013
 import sys
 sys.path.append("../yhy522")
 import yhy522
+import time
 
 def main(argv):
     #TEST Test_Com
@@ -55,10 +56,34 @@ def main(argv):
 
     #TEST Beep
     print "Beep()"
-    if(yhy522.Beep(True, 9)):
+    if(yhy522.Beep(True, 1)):
         print "Beep success"
     else:
         print "Beep failed"
+
+    #TEST SetAutoModeOff
+    print "SetAutoModeOff()"
+    if(yhy522.SetAutoModeOff()):
+        print "SetAutoModeOff success"
+    else:
+        print "SetAutoModeOff failed"
+
+    #TEST SetAutoSeekCardMode
+    print "SetAutoSeekCardMode()"
+    if(yhy522.SetAutoSeekCardMode()):
+        print "SetAutoSeekCardMode success"
+    else:
+        print "SetAutoSeekCardMode failed"
+
+    #TEST SetAutoSeekCardMode
+    print "SetAutoReadIdMode()"
+    if(yhy522.SetAutoReadIdMode()):
+        print "SetAutoReadIdMode success"
+    else:
+        print "SetAutoReadIdMode failed"
+
+    while 1:
+       time.sleep(1)
 
 if __name__ == "__main__":
     main(sys.argv)
