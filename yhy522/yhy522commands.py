@@ -30,7 +30,7 @@ def SetAutoReadBlockMode(block):
     return MConfigure(auto_code=3, block_rw = block)
 
 def SetAutoWriteBlockMode(block):
-    succes, data = MConfigure(auto_code=4, block_rw = block, value)
+    succes, data = MConfigure(auto_code=4, block_rw = block)
     succes2, data2 = Download_Block_String(value)
     # TODO: implement this stuff
 
