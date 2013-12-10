@@ -6,8 +6,6 @@ HEADER_1 = 0xAA
 HEADER_2 = 0xBB
 
 def validate(response):
-    sys.stdout.write("validating response: ")
-    print([ord(x) for x in response])
     if len(response) < 5:
         return False
     result = True
@@ -19,14 +17,14 @@ def validate(response):
     data = [ ord(x) for x in response[4:-1] ]    
 
     if(header1 != HEADER_1 | header2 != HEADER_2):
-        print "Header is not correct"
+        #print "Header is not correct"
         result = False
     if(length != (len(response[2:-1]))):
-        print "Length is not correct"
+        #print "Length is not correct"
         result = False
     my_csum = calculate_checksum(length, status, data)
     if(my_csum != csum):
-        print "Checksum not ok: %x != %x" % (my_csum, csum)
+        #print "Checksum not ok: %x != %x" % (my_csum, csum)
         result = False
             
     #print "Status = 0x" + format(status, 'X')
@@ -72,7 +70,7 @@ def send_command(command, data):
         for d in data:
            to_send += format(d, '02X')
     to_send += format(csum, '02X')
-    print "Sending:  " + to_send    
+    #print "Sending:  " + to_send    
 
     validated = False
     line = conn.readline()   # read a '\n' terminated line
@@ -84,22 +82,22 @@ def send_command(command, data):
             result += format(ord(c), '02X')
         if(validate(line)):
             validated = True
-            print "Received: " + result
+            #print "Received: " + result
         else:
-            print "Received invalid data: " + result
+            #print "Received invalid data: " + result
             return False, 0 
     
         recv_status = ord(line[3])
         recv_data = [ ord(x) for x in line[4:-1] ]
 
         if ((recv_status == command) and (validated == True)):
-            print "recv_status and validate ok"
+            #print "recv_status and validate ok"
             return True, recv_data
         elif(recv_status == command ^ 0xFF):
-            print "something went wrong"
+            #print "something went wrong"
             return False, 0 
     else:
-        print "Received no response"
+        #print "Received no response"
         return False, 0 
 
 
