@@ -62,25 +62,25 @@ def main(argv):
         print "Beep failed"
 
     #TEST SetAutoModeOff
-    print "SetAutoModeOff()"
-    if(commands.SetAutoModeOff()):
-        print "SetAutoModeOff success"
-    else:
-        print "SetAutoModeOff failed"
+    #print "SetAutoModeOff()"
+    #if(commands.SetAutoModeOff()):
+    #    print "SetAutoModeOff success"
+    #else:
+    #    print "SetAutoModeOff failed"
 
     #TEST SetAutoSeekCardMode
-    print "SetAutoSeekCardMode()"
-    if(commands.SetAutoSeekCardMode()):
-        print "SetAutoSeekCardMode success"
-    else:
-        print "SetAutoSeekCardMode failed"
+    #print "SetAutoSeekCardMode()"
+    #if(commands.SetAutoSeekCardMode()):
+    #    print "SetAutoSeekCardMode success"
+    #else:
+    #    print "SetAutoSeekCardMode failed"
 
     #TEST SetAutoSeekCardMode
-    print "SetAutoReadIdMode()"
-    if(commands.SetAutoReadIdMode()):
-        print "SetAutoReadIdMode success"
-    else:
-        print "SetAutoReadIdMode failed"
+    #print "SetAutoReadIdMode()"
+    #if(commands.SetAutoReadIdMode()):
+    #    print "SetAutoReadIdMode success"
+    #else:
+    #    print "SetAutoReadIdMode failed"
 
     while 1:
        time.sleep(1)

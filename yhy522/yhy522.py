@@ -1,10 +1,15 @@
 import serial
+import sys
 
 HEADER = 0xAABB
 HEADER_1 = 0xAA
 HEADER_2 = 0xBB
 
 def validate(response):
+    sys.stdout.write("validating response: ")
+    print([ord(x) for x in response])
+    if len(response) < 5:
+        return False
     result = True
     header1 = ord(response[0])
     header2 = ord(response[1])
@@ -53,6 +58,7 @@ def send_command(command, data):
     conn.write(chr(HEADER_2))
     conn.write(chr(length))
     conn.write(chr(command))
+
     if data:
         for d in data:
             conn.write(chr(d))
@@ -68,26 +74,32 @@ def send_command(command, data):
     to_send += format(csum, '02X')
     print "Sending:  " + to_send    
 
+    validated = False
     line = conn.readline()   # read a '\n' terminated line
+    conn.close()
+
     if line:
         result = ""
         for c in line:
             result += format(ord(c), '02X')
         if(validate(line)):
+            validated = True
             print "Received: " + result
         else:
             print "Received invalid data: " + result
+            return False, 0 
+    
+        recv_status = ord(line[3])
+        recv_data = [ ord(x) for x in line[4:-1] ]
+
+        if ((recv_status == command) and (validated == True)):
+            print "recv_status and validate ok"
+            return True, recv_data
+        elif(recv_status == command ^ 0xFF):
+            print "something went wrong"
+            return False, 0 
     else:
         print "Received no response"
-    
-    conn.close()
-
-    recv_status = ord(line[3])
-    recv_data = [ ord(x) for x in line[4:-1] ]
-
-    if(recv_status == command):
-        return True, recv_data
-    elif(recv_status == command ^ 0xFF):
-        return False, data
+        return False, 0 
 
 

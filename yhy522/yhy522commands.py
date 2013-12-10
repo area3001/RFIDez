@@ -145,10 +145,11 @@ def Card_Type():
 
 def Card_ID(data=None):
     succes, data = yhy522.send_command(cmd.Card_ID, data)
+    print data
     if(succes):
         return data
     else:
-        raise Exception("Card_ID error")
+        return []
 
 def Block_Read(data):
     yhy522.send_command(cmd.Block_Read, data)
