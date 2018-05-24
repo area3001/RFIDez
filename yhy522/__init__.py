@@ -1,0 +1,1 @@
+from .yhy522 import Yhy522

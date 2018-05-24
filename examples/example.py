@@ -1,26 +1,21 @@
-'''
-Created on 15 okt. 2013
-
-@author: bert
-'''
-
-import sys
-sys.path.append("../yhy522")
-import yhy522commands as commands
+import yhy522
 import time
 
-def main(argv):
+def main():
+
+    rfid = yhy522.Yhy522("/dev/ttyUSB0")
+
     #TEST Test_Com
     print "Test_Com([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07])"
-    if(commands.Test_Com([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07])):
+    if(rfid.Test_Com([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07])):
     	print "Test_Com succes"
     else:
     	print "Test_Com failed"
-    
+
     #TEST Card_ID
     print "Card_ID()"
     try:
-        card_id = commands.Card_ID()
+        card_id = rfid.Card_ID()
         result = "Card ID Succes: "
         for c in card_id:
             result += format(c, 'X')
@@ -31,32 +26,32 @@ def main(argv):
     #TEST Card_Type
     print "Card_Type()"
     try:
-        card_type = commands.Card_Type()
+        card_type = rfid.Card_Type()
         print "Card Type = {0}".format(card_type, '02X')
     except Exception as e:
-        print "Card_Type() Failed"   
+        print "Card_Type() Failed"
 
     #TEST Antenna_Control
     print "Antenna_Control()"
-    if(commands.Antenna_Control(False)):
+    if(rfid.Antenna_Control(False)):
     	print "Setting antenna OFF: Succes"
     else:
-		print "Setting antenna OFF: Failed"  
-    if(commands.Antenna_Control(True)):
+		print "Setting antenna OFF: Failed"
+    if(rfid.Antenna_Control(True)):
     	print "Setting antenna ON: Succes"
     else:
-		print "Setting antenna ON: Failed"    	
+		print "Setting antenna ON: Failed"
 
     #TEST Sense_Mode
-    print "Sense_Mode()"
-    if(commands.Sense_Mode(1)):
+    print "Sense_Mode(2)"
+    if(rfid.Sense_Mode(2)):
         print "Setting sense mode to 'Auto seek card': Succes"
     else:
         print "Setting sense mode to 'Auto seek card': Failed"
 
     #TEST Beep
     print "Beep()"
-    if(commands.Beep(True, 1)):
+    if(rfid.Beep(True, 1)):
         print "Beep success"
     else:
         print "Beep failed"
@@ -86,4 +81,4 @@ def main(argv):
        time.sleep(1)
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()

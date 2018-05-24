@@ -1,3 +1,7 @@
+Header = 0xAABB
+Header_1 = 0xAA
+Header_2 = 0xBB
+
 # System commands
 
 Test_Com = 0x00
