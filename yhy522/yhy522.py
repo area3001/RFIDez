@@ -1,5 +1,40 @@
 import serial
-import yhy522constants as cmd
+
+cmd_Header = 0xAABB
+cmd_Header_1 = 0xAA
+cmd_Header_2 = 0xBB
+
+# System commands
+
+cmd_Test_Com = 0x00
+cmd_MSleep = 0x03
+cmd_MConfigure = 0x04
+cmd_Download_Keys = 0x05
+cmd_Download_Block_String = 0x08
+cmd_Download_Value = 0x09
+cmd_Antenna_Control = 0x11
+cmd_Sense_Mode = 0x13
+cmd_Beep = 0x14
+cmd_Beep_time = 0x15
+cmd_Output1 = 0x16
+cmd_Output2 = 0x17
+
+# RFID commands
+
+cmd_Change_Card_Keys = 0x06
+cmd_LOCK_Card = 0x07
+cmd_Card_Sleep = 0x12
+cmd_Card_Type = 0x19
+cmd_Card_ID = 0x20
+cmd_Block_Read = 0x21
+cmd_Block_Write = 0x22
+cmd_Value_Init = 0x23
+cmd_Value_Read = 0x24
+cmd_Value_Inc = 0x25
+cmd_Value_Dec = 0x26
+cmd_Value_Backup = 0x27
+cmd_Sector_Read = 0x2a
+cmd_Sector_Write = 0x2b
 
 class Yhy522(object):
 
@@ -13,23 +48,23 @@ class Yhy522(object):
         if len(response) < 5:
             return False
         result = True
-        header1 = ord(response[0])
-        header2 = ord(response[1])
-        length = ord(response[2])
-        status = ord(response[3])
-        csum = ord(response[-1])
+        header1 = response[0]
+        header2 = response[1]
+        length = response[2]
+        status = response[3]
+        csum = response[-1]
         if(length > 2):
-            data = [ ord(x) for x in response[4:-1] ]
+            data = response[4:-1]
         else:
             data = None
 
-        if(header1 != Header_1 | header2 != Header_2):
+        if(header1 != cmd_Header_1 | header2 != cmd_Header_2):
             #print "Header is not correct"
             result = False
         if(length != (len(response[2:-1]))):
             #print "Length is not correct"
             result = False
-        my_csum = __calculate_checksum(length, status, data)
+        my_csum = self.__calculate_checksum(length, status, data)
         if(my_csum != csum):
             #print "Checksum not ok: %x != %x" % (my_csum, csum)
             result = False
@@ -55,21 +90,21 @@ class Yhy522(object):
         return length
 
     def __send_command(self, command, data):
-        length = __calculate_length(command, data)
-        csum = __calculate_checksum(length, command, data)
+        length = self.__calculate_length(command, data)
+        csum = self.__calculate_checksum(length, command, data)
 
-        self.__conn.write(chr(cmd.Header_1))
-        self.__conn.write(chr(cmd.Header_2))
-        self.__conn.write(chr(length))
-        self.__conn.write(chr(command))
+        self.__conn.write(bytes([cmd_Header_1]))
+        self.__conn.write(bytes([cmd_Header_2]))
+        self.__conn.write(bytes([length]))
+        self.__conn.write(bytes([command]))
 
         if data:
             for d in data:
-                self.__conn.write(chr(d))
-        self.__conn.write(chr(csum))
+                self.__conn.write(bytes([d]))
+        self.__conn.write(bytes([csum]))
 
         to_send = ""
-        to_send += format(cmd.Header, '02X')
+        to_send += format(cmd_Header, '02X')
         to_send += format(length, '02X')
         to_send += format(command, '02X')
         if data:
@@ -82,14 +117,14 @@ class Yhy522(object):
         line = self.__conn.readline()   # read a '\n' terminated line
 
         if line:
-            if(not __validate(line)):
+            if(not self.__validate(line)):
                 return False, None
 
-            recv_length = ord(line[2])
-            recv_status = ord(line[3])
+            recv_length = line[2]
+            recv_status = line[3]
 
             if(recv_length > 2):
-                recv_data = [ ord(x) for x in line[4:-1] ]
+                recv_data = line[4:-1]
             else:
                 recv_data = None
 
@@ -104,11 +139,11 @@ class Yhy522(object):
 
     # System commands
     def Test_Com(self):
-        success, recv_data = __send_command(cmd.Test_Com, None)
+        success, recv_data = self.__send_command(cmd_Test_Com, None)
         return success
 
     def MSleep(self, data):
-        self.__send_command(cmd.MSleep, data)
+        self.__send_command(cmd_MSleep, data)
 
     def SetAutoModeOff(self):
         return MConfigure(auto_code=0)
@@ -155,23 +190,23 @@ class Yhy522(object):
             baud_code = 5 # default baudrate
 
         data = [auto_code, key_type] + key_string + [block_rw, block_value, value_backup, start_sector, end_sector, auth_mode, RFU, baud_code]
-        succes, data = __send_command(cmd.MConfigure, data)
+        succes, data = self.__send_command(cmd_MConfigure, data)
 
         # Insert a reset command here
         return success
 
     def Download_Keys(self, data):
-        __send_command(cmd.Download_Keys, data)
+        self.__send_command(cmd_Download_Keys, data)
     def Download_Block_String(self, data):
-        __send_command(cmd.Download_Block_String, data)
+        self.__send_command(cmd_Download_Block_String, data)
     def Download_Value(self, data):
-        __send_command(cmd.Download_Value, data)
+        self.__send_command(cmd_Download_Value, data)
     def Antenna_Control(self, state):
         if(state):
             data = [0x03]
         else:
             data = [0x00]
-        succes, data = __send_command(cmd.Antenna_Control, data)
+        succes, data = self.__send_command(cmd_Antenna_Control, data)
 
         if(succes):
             return True
@@ -182,7 +217,7 @@ class Yhy522(object):
     def Sense_Mode(self, code):
         if(code >= 0 & code < 8):
             data = [code]
-            success, data = __send_command(cmd.Sense_Mode, data)
+            success, data = self.__send_command(cmd_Sense_Mode, data)
             return success
         else:
             raise Exception("Unknown code. Should be between 0 and 7")
@@ -193,7 +228,7 @@ class Yhy522(object):
         else:
             data = [0x0F]
 
-        success, data = __send_command(cmd.Beep, data)
+        success, data = self.__send_command(cmd_Beep, data)
         return success
 
     def Beep_time(self, interval_ms):
@@ -201,59 +236,59 @@ class Yhy522(object):
         if(data > 255):
             data = 255
         data = [data]
-        success, data = __send_command(cmd.Beep_time, data)
+        success, data = self.__send_command(cmd_Beep_time, data)
         return success
 
     def Output1(self, data):
-        success, data = __send_command(cmd.Output1, data)
+        success, data = self.__send_command(cmd_Output1, data)
         return success
 
     def Output2(self, data):
-        success, data = __send_command(cmd.Output2, data)
+        success, data = self.__send_command(cmd_Output2, data)
         return success
 
     # RFID commands
     def Change_Card_Keys(self, data):
-        success, data = __send_command(cmd.Change_Card_Keys, data)
+        success, data = self.__send_command(cmd_Change_Card_Keys, data)
         return success
 
     def LOCK_Card(self, data):
-        success, data = __send_command(cmd.LOCK_Card, data)
+        success, data = self.__send_command(cmd_LOCK_Card, data)
         return success
 
     def Card_Sleep(self, data):
-        success, data = __send_command(cmd.Card_Sleep, data)
+        success, data = self.__send_command(cmd_Card_Sleep, data)
         return success
 
     def Card_Type(self):
-        succes, data = __send_command(cmd.Card_Type, [])
+        succes, data = self.__send_command(cmd_Card_Type, [])
         if(succes):
             return data[0] * 256 + data[1]
         else:
             raise Exception("Error getting card type")
 
     def Card_ID(self, data=None):
-        succes, data = __send_command(cmd.Card_ID, data)
+        succes, data = self.__send_command(cmd_Card_ID, data)
         if(succes):
             return data
         else:
             return []
 
     def Block_Read(self, data):
-        __send_command(cmd.Block_Read, data)
+        self.__send_command(cmd_Block_Read, data)
     def Block_Write(self, data):
-        __send_command(cmd.Block_Write, data)
+        self.__send_command(cmd_Block_Write, data)
     def Value_Init(self, data):
-        __send_command(cmd.Value_Init, data)
+        self.__send_command(cmd_Value_Init, data)
     def Value_Read(self, data):
-        __send_command(cmd.Value_Read, data)
+        self.__send_command(cmd_Value_Read, data)
     def Value_Inc(self, data):
-        __send_command(cmd.Value_Inc, data)
+        self.__send_command(cmd_Value_Inc, data)
     def Value_Dec(self, data):
-        __send_command(cmd.Value_Dec, data)
+        self.__send_command(cmd_Value_Dec, data)
     def Value_Backup(self, data):
-        __send_command(cmd.Value_Backup, data)
+        self.__send_command(cmd_Value_Backup, data)
     def Sector_Read(self, data):
-        __send_command(cmd.Sector_Read, data)
+        self.__send_command(cmd_Sector_Read, data)
     def Sector_Write(self, data):
-        __send_command(cmd.Sector_Write, data)
+        self.__send_command(cmd_Sector_Write, data)
